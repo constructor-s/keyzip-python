@@ -8,7 +8,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     with keyzip.KeyTarFile(args.inputfile) as f:
-        f.keyfile = args.privatekeyfile
+        f.privatekeyfile = args.privatekeyfile
         encrypted_file_name = f.manifest["encrypted_files"][0]
 
         with f.decryptfile(encrypted_file_name) as ff:

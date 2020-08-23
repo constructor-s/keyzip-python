@@ -41,12 +41,12 @@ class KeyTarFile(TarFile):
         return f
 
     @property
-    def keyfile(self):
-        return self._pem
+    def privatekeyfile(self):
+        return self._private_pem
 
-    @keyfile.setter
-    def keyfile(self, file):
-        self._pem = file
+    @privatekeyfile.setter
+    def privatekeyfile(self, file):
+        self._private_pem = file
 
         with open(file) as f:
             private_pem_text = "".join(f.readlines())
