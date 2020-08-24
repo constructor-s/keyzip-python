@@ -26,7 +26,8 @@ class KeyTarFile(TarFile):
 
         if self.mode == "r":
             with self.extractfile(self.MANIFEST_FILE) as mf:
-                self.manifest = json.load(mf)
+                # self.manifest = json.load(mf)
+                self.manifest = json.loads(mf.read().decode(TEXT_ENCODING))  # For Python 3.5 compatibility - see https://docs.python.org/3/whatsnew/3.6.html#json
         elif self.mode == "w":  # manifest.json does not exist yet
             self.manifest = {
                 "version": self.WRITE_VERSION,
