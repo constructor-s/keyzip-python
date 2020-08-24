@@ -2,7 +2,7 @@ import keyzip
 from argparse import ArgumentParser
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description="KeyZip demo")
+    parser = ArgumentParser(description="KeyZip decrypt demo")
     parser.add_argument("--inputfile", type=str)
     parser.add_argument("--privatekeyfile", type=str)
     args = parser.parse_args()
