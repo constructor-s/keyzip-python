@@ -46,14 +46,10 @@ class KeyTarFile(TarFile):
         (therefore must have already created the cipher, e.g. by setting self.keyfile),
         then use TarFile.extractfile to extract the .tar.zip file and return the extracted inner .tar file as TarFile
         """
-        encrypted_key_b64 = self.manifest["encrypted_key"]
-        encrypted_key_bytes = b64decode(encrypted_key_b64)
-        decrypted_key = self.cipher.decrypt(encrypted_key_bytes, sentinel=self.ERROR_SENTINEL)
-
         # TODO: are dangling handles a problem?
         f = self.extractfile(member)
         f = AESZipFile(f)
-        f.setpassword(decrypted_key)
+        f.setpassword(self.aes_key_b64)
         f = TarFile(fileobj=f.open(f.namelist()[0]))
 
         return f
@@ -105,6 +101,21 @@ class KeyTarFile(TarFile):
                 self.addfile(ti, f)
 
         super(KeyTarFile, self).close()
+
+    @property
+    def aes_key_b64(self):
+        if self.mode == "r":
+            encrypted_key_b64 = self.manifest["encrypted_key"]
+            encrypted_key_bytes = b64decode(encrypted_key_b64)
+            decrypted_key = self.cipher.decrypt(encrypted_key_bytes, sentinel=self.ERROR_SENTINEL)
+            if decrypted_key == self.ERROR_SENTINEL:
+                raise RuntimeError("Cannot decrypt AES key")
+            else:
+                return decrypted_key
+        elif self.mode == "w":
+            return self._aes_key_b64
+        else:
+            raise NotImplementedError("Unsupported operation mode %r" % self.mode)
 
     @property
     def privatekeyfile(self):
