@@ -8,6 +8,9 @@ if __name__ == '__main__':
     parser.add_argument("--showpassword", action="store_true")
     args = parser.parse_args()
 
+    if not args.inputfile:
+        args.inputfile = input("Enter input file path:")
+
     with keyzip.KeyTarFile(args.inputfile) as f:
         f.privatekeyfile = args.privatekeyfile
         encrypted_file_name = f.manifest["encrypted_files"][0]
